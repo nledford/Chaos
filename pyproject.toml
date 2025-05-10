@@ -6,8 +6,10 @@ readme = "README.md"
 authors = [
     { name = "Nathaniel Ledford", email = "nate@nateledford.com" }
 ]
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.12"
+dependencies = [
+    "robyn",
+]
 
 [project.scripts]
 chaos = "chaos:main"
