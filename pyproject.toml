@@ -1,0 +1,17 @@
+[project]
+name = "chaos"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Nathaniel Ledford", email = "nate@nateledford.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+chaos = "chaos:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
