@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import os
 import random
@@ -20,15 +21,16 @@ async def fetch_blockcypher_seeds() -> str:
     """
     Fetch multiple cryptocurrency hashes from blockcypher and return as a single string
     """
-    result = ""
+
+    async def fetch_blockcypher_seed(name: str) -> str:
+        res = await client.get(f"https://api.blockcypher.com/v1/{name}/main")
+        json = res.json()
+        return json["hash"]
 
     async with httpx.AsyncClient() as client:
-        for name in ["btc", "doge", "ltc"]:
-            res = await client.get(f"https://api.blockcypher.com/v1/{name}/main")
-            json = res.json()
-            result += json["hash"]
-
-        return result
+        coins = ["btc", "doge", "ltc"]
+        results = await asyncio.gather(*[fetch_blockcypher_seed(name) for name in coins])
+        return ''.join(results)
 
 
 async def fetch_lavarand_seed() -> str:
@@ -68,13 +70,14 @@ async def fetch_all_data() -> str:
 
     # Fetch data from various sources
     # Concat all random data into one string
-    mixed = (
-        await fetch_blockcypher_seeds()
-        + await fetch_lavarand_seed()
-        + await fetch_nist_beacon()
-        + await fetch_qrandom_seed()
-        + await fetch_random_system_data()
+    seeds = await asyncio.gather(
+        fetch_blockcypher_seeds(), 
+        fetch_lavarand_seed(),
+        fetch_nist_beacon(),
+        fetch_qrandom_seed(),
+        fetch_random_system_data()
     )
+    mixed = ''.join(seeds)
 
     # Shuffle the string
     mixed = "".join(random.sample(mixed, len(mixed)))
