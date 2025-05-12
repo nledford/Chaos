@@ -84,8 +84,8 @@ async def fetch_all_data() -> str:
 
     # Shuffle the string
     mixed = "".join(
-        random.sample(mixed, len(mixed))
-    )  # ty: ignore[invalid-argument-type]
+        random.sample(mixed, len(mixed))  # ty: ignore[invalid-argument-type]
+    )
 
     return mixed
 
