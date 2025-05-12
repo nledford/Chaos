@@ -8,9 +8,8 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "hatchling>=1.27.0",
     "httpx>=0.28.1",
-    "robyn",
+    "robyn>=0.66.2",
 ]
 
 [project.scripts]
@@ -22,6 +21,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "hatchling>=1.27.0",
     "ty>=0.0.0a8",
 ]
 

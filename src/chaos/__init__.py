@@ -103,4 +103,4 @@ async def h(request):
     }
 
 
-app.start(port=8080)
+app.start(host="0.0.0.0", port=8080)

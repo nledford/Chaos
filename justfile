@@ -16,5 +16,14 @@ format:
 dev: lint format
     uv run robyn ./src/chaos/__init__.py --dev
 
+[group('python')]
 upgrade:
   uv lock --upgrade
+
+[group('docker')]
+docker-build: lint format
+    uv lock
+    docker build -t nledford/chaos .
+
+docker-run: docker-build
+    docker run --rm -it -p '8080:8080' --name chaos nledford/chaos:latest
