@@ -3,6 +3,7 @@ import datetime
 import os
 import random
 import socket
+import time
 
 import httpx
 from robyn import Robyn
@@ -29,8 +30,10 @@ async def fetch_blockcypher_seeds() -> str:
 
     async with httpx.AsyncClient() as client:
         coins = ["btc", "doge", "ltc"]
-        results = await asyncio.gather(*[fetch_blockcypher_seed(name) for name in coins])
-        return ''.join(results)
+        results = await asyncio.gather(
+            *[fetch_blockcypher_seed(name) for name in coins]
+        )
+        return "".join(results)
 
 
 async def fetch_lavarand_seed() -> str:
@@ -71,26 +74,32 @@ async def fetch_all_data() -> str:
     # Fetch data from various sources
     # Concat all random data into one string
     seeds = await asyncio.gather(
-        fetch_blockcypher_seeds(), 
+        fetch_blockcypher_seeds(),
         fetch_lavarand_seed(),
         fetch_nist_beacon(),
         fetch_qrandom_seed(),
-        fetch_random_system_data()
+        fetch_random_system_data(),
     )
-    mixed = ''.join(seeds)
+    mixed = "".join(seeds)
 
     # Shuffle the string
-    mixed = "".join(random.sample(mixed, len(mixed)))
+    mixed = "".join(
+        random.sample(mixed, len(mixed))
+    )  # ty: ignore[invalid-argument-type]
 
     return mixed
 
 
 @app.get("/")
 async def h(request):
+    start = time.time()
+    data = await fetch_all_data()
+
     return {
         "host": socket.gethostname(),
+        "elapsedTime": time.time() - start,
         "utcTimestamp": datetime.datetime.now(datetime.UTC),
-        "data": await fetch_all_data(),
+        "data": data,
     }
 
 
