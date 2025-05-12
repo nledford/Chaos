@@ -1,14 +1,27 @@
-FROM python:3.12-slim-bookworm
-LABEL authors="nledford"
-
+# Install uv
+FROM python:3.12-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-COPY . /app
-
-# Sync the project into a new environment, asserting the lockfile is up to date
+# Change the working directory to the `app` directory
 WORKDIR /app
-RUN uv sync --locked
 
-#ENTRYPOINT ["top", "-b"]
-EXPOSE 8080
-CMD ["uv", "run", "chaos"]
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-editable
+
+# Copy the project into the intermediate image
+ADD . /app
+
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-editable
+
+FROM python:3.12-slim
+
+# Copy the environment, but not the source code
+COPY --from=builder --chown=app:app /app/.venv /app/.venv
+
+# Run the application
+CMD ["/app/.venv/bin/chaos"]

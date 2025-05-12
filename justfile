@@ -1,6 +1,6 @@
 #!/usr/bin/env just --justfile
-export PATH := join(justfile_directory(), ".env", "bin") + ":" + env_var('PATH')
 
+export PATH := join(justfile_directory(), ".env", "bin") + ":" + env_var('PATH')
 
 [group('python')]
 lint:
@@ -18,12 +18,13 @@ dev: lint format
 
 [group('python')]
 upgrade:
-  uv lock --upgrade
+    uv lock --upgrade
 
 [group('docker')]
 docker-build: lint format
     uv lock
     docker build -t nledford/chaos .
 
+[group('docker')]
 docker-run: docker-build
     docker run --rm -it -p '8080:8080' --name chaos nledford/chaos:latest
