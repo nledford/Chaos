@@ -61,9 +61,13 @@ async def fetch_qrandom_seed() -> str:
     Fetch random data from `qrandom`
     """
     async with httpx.AsyncClient() as client:
-        res = await client.get("https://qrandom.io/api/random/string?length=32")
+        res = await client.get("https://qrandom.io/api/random/binary?bytes=128")
         json = res.json()
-        return json["string"][0]
+        binary_url = json["binaryURL"]
+
+        res = await client.get(binary_url)
+        binary_data = str.encode(res.text)
+        return binary_data.hex()
 
 
 async def fetch_all_data() -> str:
