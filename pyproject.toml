@@ -23,6 +23,7 @@ build-backend = "hatchling.build"
 dev = [
     "hatchling>=1.27.0",
     "ty>=0.0.0a8",
+    "uv-bump>=0.1.2",
 ]
 
 [tool.ty.src]
