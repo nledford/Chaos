@@ -18,6 +18,7 @@ dev: lint format
 
 [group('python')]
 upgrade:
+    @uv-bump
     uv lock --upgrade
 
 [group('docker')]

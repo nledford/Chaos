@@ -2,11 +2,13 @@ import asyncio
 import datetime
 import os
 import random
+import secrets
 import socket
+import sys
 import time
 
 import httpx
-from robyn import Robyn
+from robyn import Robyn, Request
 
 app = Robyn(str(__file__))
 
@@ -95,9 +97,15 @@ async def fetch_all_data() -> str:
 
 
 @app.get("/")
-async def h(request):
+async def h(request: Request):
+    seed_format = request.query_params.get("seed_format", "alphanumeric")
+
     start = time.time()
-    data = await fetch_all_data()
+
+    if seed_format == "numeric":
+        data = secrets.randbelow(sys.maxsize)
+    else:
+        data = await fetch_all_data()
 
     return {
         "host": socket.gethostname(),
